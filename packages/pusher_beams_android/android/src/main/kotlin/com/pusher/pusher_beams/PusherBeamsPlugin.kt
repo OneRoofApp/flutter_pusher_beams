@@ -1,6 +1,7 @@
 package com.pusher.pusher_beams
 
 import android.content.Context
+import android.content.Intent
 import androidx.annotation.NonNull
 import com.pusher.pushnotifications.*
 import com.pusher.pushnotifications.auth.AuthData
@@ -9,11 +10,20 @@ import com.pusher.pushnotifications.auth.BeamsTokenProvider
 import io.flutter.Log
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin
+import io.flutter.embedding.engine.plugins.activity.ActivityAware
+import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
+
+import io.flutter.plugin.common.PluginRegistry.NewIntentListener
+import org.json.JSONObject
+import org.json.JSONTokener
 
 /** PusherBeamsPlugin */
-class PusherBeamsPlugin: FlutterPlugin, Messages.PusherBeamsApi {
+class PusherBeamsPlugin: FlutterPlugin, Messages.PusherBeamsApi, ActivityAware, NewIntentListener {
   private lateinit var context : Context
   private var alreadyInterestsListener : Boolean = false
+
+  private var data: kotlin.collections.Map<String, kotlin.Any?>? = null
+  private var initialIntent = true
 
   private lateinit var callbackHandlerApi: Messages.CallbackHandlerApi
 
@@ -29,9 +39,46 @@ class PusherBeamsPlugin: FlutterPlugin, Messages.PusherBeamsApi {
     callbackHandlerApi = Messages.CallbackHandlerApi(binding.binaryMessenger)
   }
 
+  override fun onNewIntent(intent: Intent?): Boolean {
+    handleIntent(context, intent!!)
+    return false
+  }
+
+  override fun onAttachedToActivity(binding: ActivityPluginBinding) {
+    binding.addOnNewIntentListener(this)
+    handleIntent(context, binding.activity.intent)
+  }
+
+  override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
+    binding.addOnNewIntentListener(this)
+    handleIntent(context, binding.activity.intent)
+  }
+
+  override fun onDetachedFromActivityForConfigChanges() {}
+
+  override fun onDetachedFromActivity() {
+  }
+
+  private fun handleIntent(context: Context, intent: Intent) {
+    val extras = intent.extras
+    if (extras != null) {
+      if (initialIntent) {
+        Log.d(this.toString(), "Got extras: $extras")
+        data = bundleToMap(extras.getString("info"))
+        Log.d(this.toString(), "Got initial data: $data")
+        initialIntent = false
+      }
+    }
+  }
+
   override fun start(instanceId: kotlin.String) {
     PushNotifications.start(this.context, instanceId)
     Log.d(this.toString(), "PusherBeams started with $instanceId instanceId")
+  }
+
+  override fun getInitialMessage(result: Messages.Result<kotlin.collections.Map<String, kotlin.Any?>>) {
+    Log.d(this.toString(), "Returning initial data: $data")
+    result.success(data)
   }
 
   override fun addDeviceInterest(interest: kotlin.String) {
@@ -112,5 +159,20 @@ class PusherBeamsPlugin: FlutterPlugin, Messages.PusherBeamsApi {
 
   override fun stop() {
     PushNotifications.stop()
+  }
+
+  private fun bundleToMap(info: kotlin.String?): kotlin.collections.Map<kotlin.String, kotlin.Any?>? {
+    if(info == null)
+      return null
+
+    val map: MutableMap<String, kotlin.Any?> = HashMap<String, kotlin.Any?>()
+    val infoJson = JSONTokener(info).nextValue() as JSONObject
+
+    val iterator = infoJson.keys()
+    while (iterator.hasNext()) {
+      val key = iterator.next()
+      map[key] = infoJson.get(key)
+    }
+    return map
   }
 }

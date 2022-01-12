@@ -1,6 +1,5 @@
 library pusher_beams_platform_interface;
 
-import 'package:flutter/foundation.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 import 'package:pusher_beams_platform_interface/method_channel_pusher_beams.dart';
 
@@ -12,7 +11,8 @@ abstract class PusherBeamsPlatform extends PlatformInterface {
 
   static final Object _token = Object();
 
-  // NOTE: Remember to change .onInterestChanges and .setUserId last argument to dynamic on MethodChannel
+  // NOTE: Remember to change .onInterestChanges and .setUserId last argument
+  // and .getInitialMessage return type to dynamic on MethodChannel
   static PusherBeamsPlatform _instance = PusherBeamsApi();
 
   /// The default instance of [PusherBeamsPlatform] to use.
@@ -30,6 +30,10 @@ abstract class PusherBeamsPlatform extends PlatformInterface {
 
   Future<void> start(String instanceId) {
     throw UnimplementedError('start() has not been implemented.');
+  }
+
+  Future<dynamic> getInitialMessage() {
+    throw UnimplementedError('getInitialMessage() has not been implemented.');
   }
 
   Future<void> addDeviceInterest(String interest) {

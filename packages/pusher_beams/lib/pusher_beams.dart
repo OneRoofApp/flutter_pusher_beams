@@ -30,6 +30,23 @@ class PusherBeams extends PusherBeamsPlatform with CallbackHandlerApi {
   /// This is intended to be a singleton
   static PusherBeams get instance => _instance;
 
+  /// Gets any data associated to a Push Notification when opening the app by
+  /// taping on it.
+  ///
+  /// ## Example Usage
+  ///
+  /// ```dart
+  /// function someAsyncFunction() async {
+  ///   final message = await PusherBeams.instance.getInitialMessage();
+  /// }
+  /// ```
+  ///
+  /// Throws an [Exception] in case of failure.
+  @override
+  Future<Map<String, dynamic>?> getInitialMessage() async {
+    return await _pusherBeamsApi.getInitialMessage();
+  }
+
   /// Adds an [interest] in this device.
   ///
   /// ## Example Usage

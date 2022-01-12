@@ -11,6 +11,9 @@ class BeamsAuthProvider {
 abstract class PusherBeamsApi {
   void start(String instanceId);
 
+  @async
+  Map<String, dynamic> getInitialMessage();
+
   void addDeviceInterest(String interest);
 
   void removeDeviceInterest(String interest);
