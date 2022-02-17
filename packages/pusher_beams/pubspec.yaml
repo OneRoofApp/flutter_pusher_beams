@@ -3,6 +3,7 @@ description: Official Flutter Plugin for Pusher Beams, receive notifications eas
 version: 1.0.2
 repository: https://github.com/pusher/push-notifications-flutter
 issue_tracker: https://github.com/pusher/push-notifications-flutter/issues
+publish_to: none
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
@@ -11,10 +12,26 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  pusher_beams_platform_interface: ^1.0.4
-  pusher_beams_web: ^1.0.2
-  pusher_beams_android: ^1.0.2
-  pusher_beams_ios: ^1.0.3
+  pusher_beams_platform_interface: 
+    git: 
+      url: git@github.com:esarbanis/flutter_pusher_beams.git 
+      ref: pub-depedency 
+      path: packages/pusher_beams_platform_interface 
+  pusher_beams_web:
+    git: 
+      url: git@github.com:esarbanis/flutter_pusher_beams.git 
+      ref: pub-depedency 
+      path: packages/pusher_beams_web 
+  pusher_beams_android: 
+    git: 
+      url: git@github.com:esarbanis/flutter_pusher_beams.git 
+      ref: pub-depedency 
+      path: packages/pusher_beams_android 
+  pusher_beams_ios:
+    git: 
+      url: git@github.com:esarbanis/flutter_pusher_beams.git 
+      ref: pub-depedency 
+      path: packages/pusher_beams_ios 
   uuid: ^3.0.5
 
 dev_dependencies:
