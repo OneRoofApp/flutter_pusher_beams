@@ -70,6 +70,13 @@ class _MyHomePageState extends State<MyHomePage> {
           .onMessageReceivedInTheForeground(_onMessageReceivedInTheForeground);
     }
     await _checkForInitialMessage();
+    await PusherBeams.instance.onMessageOpenedApp(_onMessageOpenedApp);
+  }
+
+  void _onMessageOpenedApp(Map<Object?, Object?>? data) {
+    if (data != null) {
+      _showAlert('Opened app with:', data.toString());
+    }    
   }
 
   Future<void> _checkForInitialMessage() async {
@@ -102,38 +109,42 @@ class _MyHomePageState extends State<MyHomePage> {
         appBar: AppBar(
           title: const Text('Plugin example app'),
         ),
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            OutlinedButton(
-                onPressed: () async {
-                  await PusherBeams.instance.addDeviceInterest('bananas');
-                },
-                child: const Text('I like bananas')),
-            OutlinedButton(
-                onPressed: () async {
-                  await PusherBeams.instance.removeDeviceInterest('bananas');
-                },
-                child: const Text("I don't like banana anymore")),
-            OutlinedButton(
-                onPressed: () async {
-                  await PusherBeams.instance.addDeviceInterest('apples');
-                },
-                child: const Text('I like apples')),
-            OutlinedButton(
-                onPressed: () async {
-                  await PusherBeams.instance.addDeviceInterest('garlic');
-                },
-                child: const Text('I like garlic')),
-            OutlinedButton(
-                onPressed: getSecure, child: const Text('Get Secure')),
-            OutlinedButton(
-                onPressed: () async {
-                  await PusherBeams.instance.clearDeviceInterests();
-                },
-                child: const Text('Clear my interests'))
-          ],
+        body: Container(
+          padding: const EdgeInsets.symmetric(vertical: 50),
+          width: MediaQuery.of(context).size.width,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              OutlinedButton(
+                  onPressed: () async {
+                    await PusherBeams.instance.addDeviceInterest('bananas');
+                  },
+                  child: const Text('I like bananas')),
+              OutlinedButton(
+                  onPressed: () async {
+                    await PusherBeams.instance.removeDeviceInterest('bananas');
+                  },
+                  child: const Text("I don't like banana anymore")),
+              OutlinedButton(
+                  onPressed: () async {
+                    await PusherBeams.instance.addDeviceInterest('apples');
+                  },
+                  child: const Text('I like apples')),
+              OutlinedButton(
+                  onPressed: () async {
+                    await PusherBeams.instance.addDeviceInterest('garlic');
+                  },
+                  child: const Text('I like garlic')),
+              OutlinedButton(
+                  onPressed: getSecure, child: const Text('Get Secure')),
+              OutlinedButton(
+                  onPressed: () async {
+                    await PusherBeams.instance.clearDeviceInterests();
+                  },
+                  child: const Text('Clear my interests'))
+            ],
+          ),
         ),
       ),
     );
