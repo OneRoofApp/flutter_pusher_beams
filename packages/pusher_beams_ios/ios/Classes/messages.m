@@ -77,7 +77,8 @@ static NSDictionary<NSString *, id> *wrapResult(id result, FlutterError *error) 
   if ([value isKindOfClass:[BeamsAuthProvider class]]) {
     [self writeByte:128];
     [self writeValue:[value toMap]];
-  } else {
+  } else 
+{
     [super writeValue:value];
   }
 }
@@ -313,6 +314,26 @@ void PusherBeamsApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<Pu
         NSString *arg_callbackId = args[0];
         FlutterError *error;
         [api onMessageReceivedInTheForegroundCallbackId:arg_callbackId error:&error];
+        callback(wrapResult(nil, error));
+      }];
+    }
+    else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel =
+      [FlutterBasicMessageChannel
+        messageChannelWithName:@"dev.flutter.pigeon.PusherBeamsApi.onMessageOpenedApp"
+        binaryMessenger:binaryMessenger
+        codec:PusherBeamsApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(onMessageOpenedAppOnMessageOpenedAppCallbackId:error:)], @"PusherBeamsApi api (%@) doesn't respond to @selector(onMessageOpenedAppCallbackId:error:)", api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        NSString *arg_callbackId = args[0];
+        FlutterError *error;
+        [api onMessageOpenedAppOnMessageOpenedAppCallbackId:arg_callbackId error:&error];
         callback(wrapResult(nil, error));
       }];
     }
