@@ -71,7 +71,7 @@ public class Messages {
       switch (type) {
         case (byte)128:         
           return BeamsAuthProvider.fromMap((Map<String, Object>) readValue(buffer));
-        
+
         default:        
           return super.readValueOfType(type, buffer);
         
@@ -101,6 +101,7 @@ public class Messages {
     void setUserId(String userId, BeamsAuthProvider provider, String callbackId);
     void clearAllState();
     void onMessageReceivedInTheForeground(String callbackId);
+    void onMessageOpenedApp(String callbackId);
     void stop();
 
     /** The codec used by PusherBeamsApi. */
@@ -361,6 +362,30 @@ public class Messages {
                 throw new NullPointerException("callbackIdArg unexpectedly null.");
               }
               api.onMessageReceivedInTheForeground(callbackIdArg);
+              wrapped.put("result", null);
+            }
+            catch (Error | RuntimeException exception) {
+              wrapped.put("error", wrapError(exception));
+            }
+            reply.reply(wrapped);
+          });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(binaryMessenger, "dev.flutter.pigeon.PusherBeamsApi.onMessageOpenedApp", getCodec());
+        if (api != null) {
+          channel.setMessageHandler((message, reply) -> {
+            Map<String, Object> wrapped = new HashMap<>();
+            try {
+              ArrayList<Object> args = (ArrayList<Object>)message;
+              String callbackIdArg = (String)args.get(0);
+              if (callbackIdArg == null) {
+                throw new NullPointerException("callbackIdArg unexpectedly null.");
+              }
+              api.onMessageOpenedApp(callbackIdArg);
               wrapped.put("result", null);
             }
             catch (Error | RuntimeException exception) {

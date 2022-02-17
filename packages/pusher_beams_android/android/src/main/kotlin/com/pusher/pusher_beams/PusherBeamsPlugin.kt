@@ -25,8 +25,8 @@ class PusherBeamsPlugin : FlutterPlugin, Messages.PusherBeamsApi, ActivityAware,
     private var alreadyInterestsListener: Boolean = false
     private var currentActivity: Activity? = null
 
+    private var onMessageOpenedAppCallbackId: String? = null
     private var data: kotlin.collections.Map<String, kotlin.Any?>? = null
-    private var initialIntent = true
 
     private lateinit var callbackHandlerApi: Messages.CallbackHandlerApi
 
@@ -44,6 +44,17 @@ class PusherBeamsPlugin : FlutterPlugin, Messages.PusherBeamsApi, ActivityAware,
 
     override fun onNewIntent(intent: Intent?): Boolean {
         handleIntent(context, intent!!)
+
+        if(onMessageOpenedAppCallbackId != null) {
+            callbackHandlerApi.handleCallback(
+                onMessageOpenedAppCallbackId,
+                "onMessageOpenedApp",
+                listOf(data)
+            ) {
+                Log.d(this.toString(), "App opened from background with data: $data")
+            }
+        }
+
         return false
     }
 
@@ -67,12 +78,9 @@ class PusherBeamsPlugin : FlutterPlugin, Messages.PusherBeamsApi, ActivityAware,
     private fun handleIntent(context: Context, intent: Intent) {
         val extras = intent.extras
         if (extras != null) {
-            if (initialIntent) {
-                Log.d(this.toString(), "Got extras: $extras")
-                data = bundleToMap(extras.getString("info"))
-                Log.d(this.toString(), "Got initial data: $data")
-                initialIntent = false
-            }
+            Log.d(this.toString(), "Got extras: $extras")
+            data = bundleToMap(extras.getString("info"))
+            Log.d(this.toString(), "Got initial data: $data")
         }
     }
 
@@ -194,6 +202,10 @@ class PusherBeamsPlugin : FlutterPlugin, Messages.PusherBeamsApi, ActivityAware,
                     }
                 })
         }
+    }
+
+    override fun onMessageOpenedApp(callbackId: String) {
+        onMessageOpenedAppCallbackId = callbackId
     }
 
     override fun stop() {
