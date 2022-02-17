@@ -12,7 +12,7 @@ abstract class PusherBeamsApi {
   void start(String instanceId);
 
   @async
-  Map<String, dynamic> getInitialMessage();
+  Map<String, dynamic>? getInitialMessage();
 
   void addDeviceInterest(String interest);
 
@@ -31,6 +31,8 @@ abstract class PusherBeamsApi {
   void clearAllState();
 
   void onMessageReceivedInTheForeground(String callbackId);
+
+  void onMessageOpenedApp(String callbackId);
 
   void stop();
 }
