@@ -53,6 +53,7 @@ This is the comparison table of functions implemented within this plugin accordi
 | [getDeviceInterests](https://pub.dev/documentation/pusher_beams/latest/pusher_beams/PusherBeams/getDeviceInterests.html)   | ✅   | ✅       | ✅   |
 | [onInterestChanges](https://pub.dev/documentation/pusher_beams/latest/pusher_beams/PusherBeams/onInterestChanges.html)    | ✅   | ✅       | ⬜️   |
 | [onMessageReceivedInTheForeground](https://pub.dev/documentation/pusher_beams/latest/pusher_beams/PusherBeams/onMessageReceivedInTheForeground.html)    | ✅   | ✅       | ⬜️   |
+| [onMessageOpenedApp](https://pub.dev/documentation/pusher_beams/latest/pusher_beams/PusherBeams/onMessageOpenedApp.html)    | ✅   | ✅       | ⬜️   |
 | [getInitialMessage](https://pub.dev/documentation/pusher_beams/latest/pusher_beams/PusherBeams/getInitialMessage.html)    | ✅   | ✅       | ⬜️   |
 | [removeDeviceInterest](https://pub.dev/documentation/pusher_beams/latest/pusher_beams/PusherBeams/removeDeviceInterest.html) | ✅   | ✅       | ✅   |
 | [setDeviceInterests](https://pub.dev/documentation/pusher_beams/latest/pusher_beams/PusherBeams/setDeviceInterests.html)   | ✅   | ✅       | ✅   |

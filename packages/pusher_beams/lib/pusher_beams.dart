@@ -69,6 +69,46 @@ class PusherBeams extends PusherBeamsPlatform with CallbackHandlerApi {
     return await _pusherBeamsApi.getInitialMessage();
   }
 
+  /// Gets any data associated to a Push Notification when opening the app,
+  /// from a backgrounded state, by taping on it.
+  ///
+  /// ## Example Usage
+  ///
+  /// ```dart
+  /// void _onMessageOpenedApp(Map<Object?, Object?>? data) {
+  ///   if (data != null) {
+  ///     _navigate(data); // Do deep-linking
+  ///   }
+  /// }
+  ///
+  /// function someAsyncFunction() async {
+  ///   await PusherBeams.instance.onMessageOpenedApp(_onMessageOpenedApp);
+  /// }
+  /// ```
+  ///
+  /// In order to receive data you need to send the pusher message in the
+  /// following format:
+  ///
+  /// ```json
+  /// {
+  ///   "interests":["hello"],
+  ///   "apns": {
+  ///     "aps": {
+  ///       "alert": {"title":"Hello", "body":"Hello, world!"},
+  ///     },
+  ///    "data": {
+  ///       "info": { "name": "george" }
+  ///     }
+  ///   },
+  ///   "fcm": {
+  ///     "notification": {"title":"Hello", "body":"Hello, world!"},
+  ///     "data": {
+  ///       "info": { "name": "george" }
+  ///     }
+  ///   }
+  /// }
+  /// ```
+  /// Throws an [Exception] in case of failure.
   @override
   Future<void> onMessageOpenedApp(OnMessageOpenedApp callback) async {
     final callbackId = _uuid.v4();
