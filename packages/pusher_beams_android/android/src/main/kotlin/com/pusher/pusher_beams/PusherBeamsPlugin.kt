@@ -18,6 +18,9 @@ import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 import io.flutter.plugin.common.PluginRegistry.NewIntentListener
 import org.json.JSONObject
 import org.json.JSONTokener
+import java.lang.IllegalStateException
+import java.util.*
+import kotlin.collections.HashMap
 
 /** PusherBeamsPlugin */
 class PusherBeamsPlugin : FlutterPlugin, Messages.PusherBeamsApi, ActivityAware, NewIntentListener {
@@ -95,43 +98,68 @@ class PusherBeamsPlugin : FlutterPlugin, Messages.PusherBeamsApi, ActivityAware,
     }
 
     override fun addDeviceInterest(interest: kotlin.String) {
-        PushNotifications.addDeviceInterest(interest)
-        Log.d(this.toString(), "Added device to interest: $interest")
+        try {
+            PushNotifications.addDeviceInterest(interest)
+            Log.d(this.toString(), "Added device to interest: $interest")
+        } catch(e: IllegalStateException) {
+            Log.w(this.toString(), "Call to addDeviceInterest has no effect because it must have been called after PushNotifications.start")
+        }
     }
 
     override fun removeDeviceInterest(interest: String) {
-        PushNotifications.removeDeviceInterest(interest)
-        Log.d(this.toString(), "Removed device to interest: $interest")
+        try {
+            PushNotifications.removeDeviceInterest(interest)
+            Log.d(this.toString(), "Removed device to interest: $interest")
+        } catch(e: IllegalStateException) {
+            Log.w(this.toString(), "Call to removeDeviceInterest has no effect because it must have been called after PushNotifications.start")
+        }
     }
 
     override fun getDeviceInterests(): kotlin.collections.List<String> {
-        return PushNotifications.getDeviceInterests().toList()
+        return try {
+            PushNotifications.getDeviceInterests().toList()
+        } catch(e: IllegalStateException) {
+            Log.w(this.toString(), "Call to getDeviceInterests has no effect because it must have been called after PushNotifications.start")
+            Collections.emptyList()
+        }
     }
 
     override fun setDeviceInterests(interests: kotlin.collections.List<String>) {
-        PushNotifications.setDeviceInterests(interests.toSet())
-        Log.d(this.toString(), "$interests added to device")
+        try {
+            PushNotifications.setDeviceInterests(interests.toSet())
+            Log.d(this.toString(), "$interests added to device")
+        } catch(e: IllegalStateException) {
+            Log.w(this.toString(), "Call to setDeviceInterests has no effect because it must have been called after PushNotifications.start")
+        }
     }
 
     override fun clearDeviceInterests() {
-        PushNotifications.clearDeviceInterests()
-        Log.d(this.toString(), "Cleared device interests")
+        try {
+            PushNotifications.clearDeviceInterests()
+            Log.d(this.toString(), "Cleared device interests")
+        } catch(e: IllegalStateException) {
+            Log.w(this.toString(), "Call to clearDeviceInterests has no effect because it must have been called after PushNotifications.start")
+        }
     }
 
     override fun onInterestChanges(callbackId: String) {
         if (!alreadyInterestsListener) {
-            PushNotifications.setOnDeviceInterestsChangedListener(object :
-                SubscriptionsChangedListener {
-                override fun onSubscriptionsChanged(interests: Set<String>) {
-                    callbackHandlerApi.handleCallback(
-                        callbackId,
-                        "onInterestChanges",
-                        listOf(interests.toList()),
-                        Messages.CallbackHandlerApi.Reply {
-                            Log.d(this.toString(), "interests changed $interests")
-                        })
-                }
-            })
+            try {
+                PushNotifications.setOnDeviceInterestsChangedListener(object :
+                    SubscriptionsChangedListener {
+                    override fun onSubscriptionsChanged(interests: Set<String>) {
+                        callbackHandlerApi.handleCallback(
+                            callbackId,
+                            "onInterestChanges",
+                            listOf(interests.toList()),
+                            Messages.CallbackHandlerApi.Reply {
+                                Log.d(this.toString(), "interests changed $interests")
+                            })
+                    }
+                })
+            } catch(e: IllegalStateException) {
+                Log.w(this.toString(), "Call to onInterestChanges has no effect because it must have been called after PushNotifications.start")
+            }
         }
     }
 
@@ -151,56 +179,67 @@ class PusherBeamsPlugin : FlutterPlugin, Messages.PusherBeamsApi, ActivityAware,
                 }
             }
         )
+        try {
+            PushNotifications.setUserId(
+                userId,
+                tokenProvider,
+                object : BeamsCallback<Void, PusherCallbackError> {
+                    override fun onFailure(error: PusherCallbackError) {
+                        callbackHandlerApi.handleCallback(
+                            callbackId,
+                            "setUserId",
+                            listOf(error.message),
+                            Messages.CallbackHandlerApi.Reply {
+                                Log.d(this.toString(), "Failed to set Authentication to device")
+                            })
+                    }
 
-        PushNotifications.setUserId(
-            userId,
-            tokenProvider,
-            object : BeamsCallback<Void, PusherCallbackError> {
-                override fun onFailure(error: PusherCallbackError) {
-                    callbackHandlerApi.handleCallback(
-                        callbackId,
-                        "setUserId",
-                        listOf(error.message),
-                        Messages.CallbackHandlerApi.Reply {
-                            Log.d(this.toString(), "Failed to set Authentication to device")
-                        })
+                    override fun onSuccess(vararg values: Void) {
+                        callbackHandlerApi.handleCallback(
+                            callbackId,
+                            "setUserId",
+                            listOf(null),
+                            Messages.CallbackHandlerApi.Reply {
+                                Log.d(this.toString(), "Device authenticated with $userId")
+                            })
+                    }
                 }
-
-                override fun onSuccess(vararg values: Void) {
-                    callbackHandlerApi.handleCallback(
-                        callbackId,
-                        "setUserId",
-                        listOf(null),
-                        Messages.CallbackHandlerApi.Reply {
-                            Log.d(this.toString(), "Device authenticated with $userId")
-                        })
-                }
-            }
-        )
+            )
+        } catch(e: IllegalStateException) {
+            Log.w(this.toString(), "Call to setUserId has no effect because it must have been called after PushNotifications.start")
+        }
     }
 
     override fun clearAllState() {
-        PushNotifications.clearAllState()
+        try {
+            PushNotifications.clearAllState()
+        } catch(e: IllegalStateException) {
+            Log.w(this.toString(), "Call to clearAllState has no effect because it must have been called after PushNotifications.start")
+        }
     }
 
     override fun onMessageReceivedInTheForeground(callbackId: String) {
-        currentActivity?.let { activity ->
-            PushNotifications.setOnMessageReceivedListenerForVisibleActivity(
-                activity,
-                object : PushNotificationReceivedListener {
-                    override fun onMessageReceived(remoteMessage: RemoteMessage) {
-                        activity.runOnUiThread {
-                            val pusherMessage = remoteMessage.toPusherMessage()
-                            callbackHandlerApi.handleCallback(
-                                callbackId,
-                                "onMessageReceivedInTheForeground",
-                                listOf(pusherMessage)
-                            ) {
-                                Log.d(this.toString(), "Message received: $pusherMessage")
+        try {
+            currentActivity?.let { activity ->
+                PushNotifications.setOnMessageReceivedListenerForVisibleActivity(
+                    activity,
+                    object : PushNotificationReceivedListener {
+                        override fun onMessageReceived(remoteMessage: RemoteMessage) {
+                            activity.runOnUiThread {
+                                val pusherMessage = remoteMessage.toPusherMessage()
+                                callbackHandlerApi.handleCallback(
+                                    callbackId,
+                                    "onMessageReceivedInTheForeground",
+                                    listOf(pusherMessage)
+                                ) {
+                                    Log.d(this.toString(), "Message received: $pusherMessage")
+                                }
                             }
                         }
-                    }
-                })
+                    })
+            }
+        } catch(e: IllegalStateException) {
+            Log.w(this.toString(), "Call to onMessageReceivedInTheForeground has no effect because it must have been called after PushNotifications.start")
         }
     }
 
@@ -209,7 +248,11 @@ class PusherBeamsPlugin : FlutterPlugin, Messages.PusherBeamsApi, ActivityAware,
     }
 
     override fun stop() {
-        PushNotifications.stop()
+        try {
+            PushNotifications.stop()
+        } catch(e: IllegalStateException) {
+            Log.w(this.toString(), "Call to stop has no effect because it must have been called after PushNotifications.start")
+        }
     }
 
     private fun bundleToMap(info: kotlin.String?): kotlin.collections.Map<kotlin.String, kotlin.Any?>? {
