@@ -245,7 +245,7 @@ packages:
     description:
       path: "packages/pusher_beams_android"
       ref: pub-depedency
-      resolved-ref: d3ff6d1819e099bbd8f311c2abebbd4a085c8e9a
+      resolved-ref: 8b6d0cc8e014e059c4e1cc6f4c61c7cdf40e96b8
       url: "git@github.com:esarbanis/flutter_pusher_beams.git"
     source: git
     version: "1.0.2"
@@ -254,7 +254,7 @@ packages:
     description:
       path: "packages/pusher_beams_ios"
       ref: pub-depedency
-      resolved-ref: d3ff6d1819e099bbd8f311c2abebbd4a085c8e9a
+      resolved-ref: 8b6d0cc8e014e059c4e1cc6f4c61c7cdf40e96b8
       url: "git@github.com:esarbanis/flutter_pusher_beams.git"
     source: git
     version: "1.0.3"
@@ -263,7 +263,7 @@ packages:
     description:
       path: "packages/pusher_beams_platform_interface"
       ref: pub-depedency
-      resolved-ref: d3ff6d1819e099bbd8f311c2abebbd4a085c8e9a
+      resolved-ref: 8b6d0cc8e014e059c4e1cc6f4c61c7cdf40e96b8
       url: "git@github.com:esarbanis/flutter_pusher_beams.git"
     source: git
     version: "1.0.4"
@@ -272,7 +272,7 @@ packages:
     description:
       path: "packages/pusher_beams_web"
       ref: pub-depedency
-      resolved-ref: d3ff6d1819e099bbd8f311c2abebbd4a085c8e9a
+      resolved-ref: 8b6d0cc8e014e059c4e1cc6f4c61c7cdf40e96b8
       url: "git@github.com:esarbanis/flutter_pusher_beams.git"
     source: git
     version: "1.0.2"
