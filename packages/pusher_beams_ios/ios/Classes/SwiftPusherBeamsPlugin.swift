@@ -8,12 +8,12 @@ public class SwiftPusherBeamsPlugin: FlutterPluginAppLifeCycleDelegate, FlutterP
     
     var interestsDidChangeCallback : String? = nil
     var messageDidReceiveInTheForegroundCallback : String? = nil
+    var onMessageOpenedAppCallback : String? = nil
     
     var beamsClient : PushNotifications?
     var started : Bool = false
     var deviceToken : Data? = nil
     var data: [String: NSObject]?
-
 
     public static func register(with registrar: FlutterPluginRegistrar) {
         let messenger : FlutterBinaryMessenger = registrar.messenger()
@@ -38,22 +38,14 @@ public class SwiftPusherBeamsPlugin: FlutterPluginAppLifeCycleDelegate, FlutterP
 
     @nonobjc public override func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         print("application.didReceiveRemoteNotification: \(userInfo)")
-        beamsClient?.handleNotification(userInfo: userInfo)
-    }
-
-    public override func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [AnyHashable: Any] = [:]) -> Bool {
-        print("SwiftPusherBeamsPlugin: didFinishLaunchingWithOptions with options: \(String(describing: launchOptions))")
-        
-        if launchOptions[UIApplication.LaunchOptionsKey.remoteNotification] != nil {
-            let remoteNotif = launchOptions[UIApplication.LaunchOptionsKey.remoteNotification] as! [String: Any]
-            let extraData = remoteNotif["data"] as? [String: Any]
-            data = extraData?["info"] as? [String: NSObject]
-            print("SwiftPusherBeamsPlugin: got initial data: \(String(describing: data))")
-        } else {
-            data = nil
+        let remoteNotificationType = self.beamsClient?.handleNotification(userInfo: userInfo)
+        if remoteNotificationType == .ShouldIgnore {
+          data = nil
+          completionHandler(.noData)
+          return
         }
-                        
-        return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+        data = extractData(message: userInfo)
+        completionHandler(.newData)
     }
     
     public func startInstanceId(_ instanceId: String, error: AutoreleasingUnsafeMutablePointer<FlutterError?>) {
@@ -145,6 +137,10 @@ public class SwiftPusherBeamsPlugin: FlutterPluginAppLifeCycleDelegate, FlutterP
         messageDidReceiveInTheForegroundCallback = callbackId
     }
     
+    public func onMessageOpenedApp(onMessageOpenedAppCallbackId callbackId: String, error: AutoreleasingUnsafeMutablePointer<FlutterError?>) {
+        onMessageOpenedAppCallback = callbackId
+    }
+    
     public override func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         if (messageDidReceiveInTheForegroundCallback != nil && SwiftPusherBeamsPlugin.callbackHandler != nil) {
             let pusherMessage: [String : Any] = [
@@ -160,8 +156,20 @@ public class SwiftPusherBeamsPlugin: FlutterPluginAppLifeCycleDelegate, FlutterP
     }
 
     public override func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-        // Handle the user interaction with the notification
-        // Not Implemented yet
+        if (onMessageOpenedAppCallback != nil && SwiftPusherBeamsPlugin.callbackHandler != nil && self.data == nil) {
+            let info = extractData(message: response.notification.request.content.userInfo)
+
+            SwiftPusherBeamsPlugin.callbackHandler?.handleCallbackCallbackId(onMessageOpenedAppCallback!, callbackName: "onMessageOpenedApp", args: [info], completion: {_ in
+                print("SwiftPusherBeamsPlugin: opened app with data: \(String(describing: info))")
+            })
+        }
+        
+        completionHandler()
+    }
+    
+    private func extractData(message: [AnyHashable : Any]) -> [String: NSObject]? {
+        let extraData = message["data"] as? [String: Any]
+        return extraData?["info"] as? [String: NSObject]
     }
     
 }
