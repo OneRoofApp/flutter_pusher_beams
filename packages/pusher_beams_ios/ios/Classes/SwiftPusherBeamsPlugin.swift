@@ -46,10 +46,15 @@ public class SwiftPusherBeamsPlugin: FlutterPluginAppLifeCycleDelegate, FlutterP
         }
         data = extractData(message: userInfo)
         
-        // Call the onDataReady closure if it's set, as data is now available
-        onDataReady?(data)
-        onDataReady = nil
+        // Debugging
+        print("Data extracted: \(String(describing: data))")
         
+        // Call the onDataReady closure if it's set, as data is now available
+        if let onDataReady = onDataReady {
+            onDataReady(data)
+            self.onDataReady = nil
+        }
+
         completionHandler(.newData)
     }
 
@@ -75,12 +80,14 @@ public class SwiftPusherBeamsPlugin: FlutterPluginAppLifeCycleDelegate, FlutterP
     }
 
     public func getInitialMessage(completion: @escaping ([String: NSObject]?, FlutterError?) -> Void) {
+        print("getInitialMessage called, current data: \(String(describing: data))")
         if let data = data {
             // If data is already available, return it immediately
             completion(data, nil)
         } else {
             // If data is not available, set the completion handler to be called when data is ready
             onDataReady = { data in
+                print("Data ready, returning to completion handler: \(String(describing: data))")
                 completion(data, nil)
             }
         }
@@ -180,7 +187,10 @@ public class SwiftPusherBeamsPlugin: FlutterPluginAppLifeCycleDelegate, FlutterP
     }
 
     private func extractData(message: [AnyHashable: Any]) -> [String: NSObject]? {
+        print("Extracting data from message: \(message)")
         let extraData = message["data"] as? [String: Any]
-        return extraData?["info"] as? [String: NSObject]
+        let info = extraData?["info"] as? [String: NSObject]
+        print("Extracted info: \(String(describing: info))")
+        return info
     }
 }
