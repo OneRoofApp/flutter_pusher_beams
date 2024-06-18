@@ -69,9 +69,17 @@ public class SwiftPusherBeamsPlugin: FlutterPluginAppLifeCycleDelegate, FlutterP
         try? beamsClient?.removeDeviceInterest(interest: interest)
     }
     
-    public func getInitialMessage(completion: @escaping ([String : NSObject]?, FlutterError?) -> Void) {
+public func getInitialMessage(completion: @escaping ([String: NSObject]?, FlutterError?) -> Void) {
+    if let data = data {
+        // If data is already available, return it immediately
         completion(data, nil)
+    } else {
+        // If data is not available, set the completion handler to be called when data is ready
+        onDataReady = { data in
+            completion(data, nil)
+        }
     }
+}
 
     public func getDeviceInterestsWithError(_ error: AutoreleasingUnsafeMutablePointer<FlutterError?>) -> [String]? {
         return beamsClient?.getDeviceInterests()
