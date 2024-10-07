@@ -17,7 +17,7 @@ dependencies:
   pusher_beams_platform_interface:
     git: 
       url: https://github.com/OneRoofApp/flutter_pusher_beams.git
-      ref: pub-depedency 
+      ref: android-namespace 
       path: packages/pusher_beams_platform_interface 
   js: ^0.6.3
   uuid: ^3.0.5

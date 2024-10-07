@@ -143,8 +143,8 @@ packages:
     dependency: "direct main"
     description:
       path: "packages/pusher_beams_platform_interface"
-      ref: pub-depedency
-      resolved-ref: da9ad93b36491a82db5ef54a18223919105444f7
+      ref: android-namespace
+      resolved-ref: "1d61dbc1b5ab51289eebcd2cb86d644b20b8669f"
       url: "https://github.com/OneRoofApp/flutter_pusher_beams.git"
     source: git
     version: "1.0.4"
