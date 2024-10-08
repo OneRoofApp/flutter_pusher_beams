@@ -52,7 +52,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'com.google.firebase:firebase-messaging:23.0.0'
     implementation 'com.google.firebase:firebase-iid:21.1.0'
-    implementation 'com.github.pusher:push-notifications-android:a6bba06a2df41b38387875a3f04dd2fdd54dbc2a'
+    implementation 'com.github.pusher:push-notifications-android:a6bba06a2d'
 
     testImplementation 'junit:junit:4.12'
 }
