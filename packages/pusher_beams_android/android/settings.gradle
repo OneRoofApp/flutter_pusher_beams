@@ -1,7 +1,1 @@
 rootProject.name = 'pusher_beams_android'
-
-sourceControl {
-    gitRepository(new URI("https://github.com/pusher/push-notifications-android.git")) {
-        producesModule("com.pusher.pusher_beams:push-notifications-android")
-    }
-}
