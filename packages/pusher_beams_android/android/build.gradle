@@ -18,6 +18,7 @@ rootProject.allprojects {
     repositories {
         google()
         mavenCentral()
+        maven { url 'https://jitpack.io' }
     }
 }
 
@@ -51,10 +52,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'com.google.firebase:firebase-messaging:23.0.0'
     implementation 'com.google.firebase:firebase-iid:21.1.0'
-    implementation('com.pusher.pusher_beams:push-notifications-android:1.10.0') {
-        version {
-            branch = 'release-1.10.0'
-        }
-    }
+    implementation 'com.github.pusher:push-notifications-android:release-1.10.0'
+
     testImplementation 'junit:junit:4.12'
 }
