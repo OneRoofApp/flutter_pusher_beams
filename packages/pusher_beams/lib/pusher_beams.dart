@@ -30,8 +30,8 @@ class PusherBeams extends PusherBeamsPlatform with CallbackHandlerApi {
   /// This is intended to be a singleton
   static PusherBeams get instance => _instance;
 
-  /// Gets any data associated to a Push Notification when opening the app by
-  /// taping on it.
+  /// Reads the [info] key included in a Push Notification when opening the app
+  /// by tapping on it.
   ///
   /// ## Example Usage
   ///
@@ -41,8 +41,8 @@ class PusherBeams extends PusherBeamsPlatform with CallbackHandlerApi {
   /// }
   /// ```
   ///
-  /// In order to receive data you need to send the pusher message in the
-  /// following format:
+  /// In order to receive data the published payload must contain an [info] key
+  /// in the [data] key:
   ///
   /// ```json
   /// {

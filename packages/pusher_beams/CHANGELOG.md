@@ -1,3 +1,11 @@
+## 1.1.2
+- Upgrade dependency versions
+
+## 1.1.1
+- Fix `PusherBeamsPlugin.kt` `onNewIntent` null safety
+
+## 1.1.0
+- Add a `getInitialMessage` method to accomplish deep-linking from a Push Notification
 
 ## 1.0.2
 - Foreground incoming push notifications handling support for Android and iOS

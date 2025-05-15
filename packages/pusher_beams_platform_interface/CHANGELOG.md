@@ -1,3 +1,9 @@
+## 1.1.1
+- Fix `PusherBeamsPlugin.kt` `onNewIntent` null safety
+
+## 1.1.0
+- Add a `getInitialMessage` method to accomplish deep-linking from a Push Notification
+
 ## 1.0.4
 - Promotion `1.0.4-dev.2` to stable version
 
