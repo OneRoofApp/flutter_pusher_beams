@@ -299,10 +299,11 @@ packages:
   pusher_beams_ios:
     dependency: "direct main"
     description:
-      name: pusher_beams_ios
-      sha256: "09871ce8ce5a64d43ed5bed3b3816a9dfa507e492bfe4bd0d3168a094c7d500c"
-      url: "https://pub.dev"
-    source: hosted
+      path: "packages/pusher_beams_ios"
+      ref: pub-depedency
+      resolved-ref: "4732d13420404d338c4926b9c20ebcd5924279fa"
+      url: "git@github.com:OneRoofApp/flutter_pusher_beams.git"
+    source: git
     version: "1.1.1"
   pusher_beams_platform_interface:
     dependency: "direct main"
